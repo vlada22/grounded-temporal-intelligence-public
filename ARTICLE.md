@@ -16,7 +16,7 @@ The scene below is the clearest visual summary. It starts from an actual frame i
 
 ![CF02 actual scene and measured fusion cube](assets/figures/figure-cf-06-scene-fusion-cube.png)
 
-*Visual abstract — actual frame at source t = 4.0 s from the synthetic CF02 video. SAM 2 provides the tracked object support for the stationary microwave, translating box and articulating cook. The cube contains all 45 reviewed windows from that scene: x is VGGT object displacement normalized by object extent; y/z are the two frozen X3D bottleneck components. Black rings mark windows where geometry alone was wrong and fusion corrected it. CF02 is an explanatory positive case, not the aggregate result.*
+*Figure 1: Where geometry and local video evidence become complementary. Left: an actual frame at source t = 4.0 s from the synthetic CF02 video, with SAM 2 support for the stationary microwave, translating box and articulating cook. Right: all 45 reviewed windows from that scene, plotted by VGGT displacement normalized by object extent and the two frozen X3D bottleneck components. Black rings mark windows where geometry alone was wrong and fusion corrected it. CF02 is an explanatory positive case, not the aggregate result.*
 
 ## Artifacts
 
@@ -66,6 +66,8 @@ Against two frozen AI-assisted source reviews — used as provisional reference 
 
 ![Strict common-vocabulary T/G event alignment](assets/figures/figure-01-ftg-strict-alignment.png)
 
+*Figure 2: Camera-aware geometry produced the stronger event alignment on the original sequence. Using the same moving/stationary vocabulary and temporal IoU threshold, G reached F1 0.638 versus 0.261 for T. These values are diagnostic measurements against frozen AI-assisted source reviews, not an independent human benchmark.*
+
 This is not a general benchmark. Within this source and vocabulary, the camera-aware state was the stronger measured baseline for testing whether local video evidence added anything.
 
 ## Finding 2 — adding a high-dimensional motion branch reduced held-out performance
@@ -74,17 +76,17 @@ The first supervised G/X/M experiment used dense object-centric windows from one
 
 After correcting the X3D path to use masked RGB and a 2048-dimensional pre-classifier representation, the held-out result remained negative:
 
-| condition | F1 | balanced accuracy |
-| --- | ---: | ---: |
-| G — geometry | **0.478** | **0.738** |
-| X — X3D | 0.230 | 0.543 |
-| M — G + X | 0.291 | 0.620 |
+- **G — geometry:** F1 **0.478**; balanced accuracy **0.738**.
+- **X — X3D:** F1 0.230; balanced accuracy 0.543.
+- **M — geometry + X3D:** F1 0.291; balanced accuracy 0.620.
 
 That failure was useful. The 2048-D X3D representation carried far more than the downstream task required: object appearance, local activity and scene-specific structure. In this small dataset, concatenating that dense representation with a compact geometry vector was associated with poor held-out transfer.
 
 The most revealing diagnostic was deliberately invalid. When overlapping windows from the same tracks were randomly divided between train and test, X and M jumped to roughly 0.96 F1. Under grouped holdout, they collapsed.
 
 ![Split leakage diagnostic](assets/figures/figure-fusion-v2-leakage-diagnostic.png)
+
+*Figure 3: Overlapping-window splits created a misleading performance gain. X and M both reached about 0.962 F1 under the random-window diagnostic, but fell to 0.230 and 0.291 under leave-one-shot-out evaluation. The gap shows why the grouped result, not the random split, is the relevant transfer test.*
 
 That result changed the direction of the work. A superficial split could have “proved” exactly the claim I wanted. The gap between random-window and grouped evaluation was consistent with fitting highly similar objects and overlapping windows rather than learning a transferable motion rule.
 
@@ -102,17 +104,17 @@ Each video became one reviewed 96-frame analytic clip. The final discovery set c
 
 The originally planned 32-dimensional X3D PCA fusion still failed:
 
-| condition | macro F1 | balanced accuracy |
-| --- | ---: | ---: |
-| G — geometry | **0.668** | **0.694** |
-| X — X3D | 0.616 | 0.617 |
-| M — wide fusion | 0.616 | 0.617 |
+- **G — geometry:** macro-F1 **0.668**; balanced accuracy **0.694**.
+- **X — X3D:** macro-F1 0.616; balanced accuracy 0.617.
+- **M — wide fusion:** macro-F1 0.616; balanced accuracy 0.617.
 
 More independent data alone did not solve the compatibility problem.
 
 Then the dimensionality sensitivity analysis produced the strongest discovery finding in the article:
 
 ![Fusion bottleneck sensitivity](assets/figures/figure-mv-03-pca-bottleneck.png)
+
+*Figure 4: Fusion performance depended on a compact video bottleneck in the discovery set. M peaked at two X3D PCA components and declined as more dimensions were admitted, eventually converging toward the weaker X-only result. Because this sensitivity was found post-hoc, the component count was subsequently selected inside nested held-out-video evaluation.*
 
 With a very small X3D subspace, M improved sharply. As more X3D dimensions were admitted, fusion progressively collapsed back toward the weaker X-only branch.
 
@@ -122,11 +124,9 @@ The inner procedure independently selected **two X3D components in all four oute
 
 The resulting discovery performance was:
 
-| condition | macro F1 | balanced accuracy |
-| --- | ---: | ---: |
-| G — geometry | 0.668 | 0.694 |
-| X — X3D bottleneck | 0.621 | 0.609 |
-| **M — compact fusion** | **0.876** | **0.872** |
+- **G — geometry:** macro-F1 0.668; balanced accuracy 0.694.
+- **X — X3D bottleneck:** macro-F1 0.621; balanced accuracy 0.609.
+- **M — compact fusion:** macro-F1 **0.876**; balanced accuracy **0.872**.
 
 M corrected 45 G errors while introducing 13 regressions. Articulation showed the strongest class-level gain.
 
@@ -156,15 +156,15 @@ The discovery-to-confirmation comparison summarizes the main change in interpret
 
 ![Discovery versus frozen confirmation](assets/figures/figure-cf-04-discovery-vs-confirmatory.png)
 
+*Figure 5: The discovery advantage contracted under frozen confirmation. Compact fusion improved macro-F1 from 0.668 to 0.876 in nested discovery evaluation, but only from 0.673 to 0.683 on four untouched confirmatory videos. The later result supports a small measured gain, not replication of the discovery magnitude.*
+
 The discovery gain contracted from **G 0.668 → M 0.876** to **G 0.673 → M 0.683** on the untouched confirmatory set.
 
 The full frozen result is:
 
-| condition | macro F1 | balanced accuracy | accuracy |
-| --- | ---: | ---: | ---: |
-| G — geometry | 0.673 | **0.689** | **0.689** |
-| X — X3D bottleneck | 0.522 | 0.517 | 0.517 |
-| **M — compact fusion** | **0.683** | **0.689** | **0.689** |
+- **G — geometry:** macro-F1 0.673; balanced accuracy **0.689**; accuracy **0.689**.
+- **X — X3D bottleneck:** macro-F1 0.522; balanced accuracy 0.517; accuracy 0.517.
+- **M — compact fusion:** macro-F1 **0.683**; balanced accuracy **0.689**; accuracy **0.689**.
 
 The preregistered primary criterion was technically met: M macro-F1 was higher than G macro-F1.
 
@@ -181,6 +181,8 @@ The pooled metric hides the real behavior.
 The direct change from G to M on the untouched confirmatory set is:
 
 ![Frozen confirmatory class delta](assets/figures/figure-cf-05-class-delta.png)
+
+*Figure 6: The frozen fusion effect was class-dependent. Relative to geometry, fusion raised articulation F1 by 0.199 and translation F1 by 0.033, while reducing stationary F1 by 0.202 across the same 180 untouched confirmatory windows. The opposing changes explain why the pooled macro-F1 gain remained small.*
 
 - **stationary:** 0.653 → 0.451 F1, **-0.202**;
 - **translating:** 0.932 → 0.966 F1, **+0.033**;
