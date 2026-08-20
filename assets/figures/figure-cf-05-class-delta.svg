@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="537.736147pt" height="299.072183pt" viewBox="0 0 537.736147 299.072183" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs><style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style></defs>
+ <g id="figure_1">
+  <g id="patch_1"><path d="M -0 299.072183 L 537.736147 299.072183 L 537.736147 0 L -0 0 z" style="fill: #ffffff"/></g>
+  <g id="axes_1">
+   <g id="patch_2"><path d="M 71.264063 249.167565 L 524.681709 249.167565 L 524.681709 22.318125 L 71.264063 22.318125 z" style="fill: #ffffff"/></g>
+   <g id="patch_3"><path d="M 297.972886 238.856227 L 106.826231 238.856227 L 106.826231 179.934294 L 297.972886 179.934294 z" clip-path="url(#plotclip)" style="fill: #1f77b4"/></g>
+   <g id="patch_4"><path d="M 297.972886 165.203811 L 329.441819 165.203811 L 329.441819 106.281879 L 297.972886 106.281879 z" clip-path="url(#plotclip)" style="fill: #1f77b4"/></g>
+   <g id="patch_5"><path d="M 297.972886 91.551396 L 485.971374 91.551396 L 485.971374 32.629463 L 297.972886 32.629463 z" clip-path="url(#plotclip)" style="fill: #1f77b4"/></g>
+   <g font-family="DejaVu Sans" font-size="10">
+    <line x1="297.972886" y1="249.167565" x2="297.972886" y2="22.318125" stroke="#1f77b4"/>
+    <text x="109.048866" y="263.766003" text-anchor="middle">−0.2</text><text x="203.510876" y="263.766003" text-anchor="middle">−0.1</text><text x="297.972886" y="263.766003" text-anchor="middle">0.0</text><text x="392.434895" y="263.766003" text-anchor="middle">0.1</text><text x="486.896905" y="263.766003" text-anchor="middle">0.2</text>
+    <text x="64.264063" y="213.194479" text-anchor="end">stationary</text><text x="64.264063" y="139.542064" text-anchor="end">translating</text><text x="64.264063" y="65.889648" text-anchor="end">articulating</text>
+    <text x="99.26927" y="212.154636" text-anchor="end">-0.202</text><text x="336.99878" y="138.50222" text-anchor="start">+0.033</text><text x="493.528334" y="64.849804" text-anchor="start">+0.199</text>
+    <text x="297.972886" y="277.444128" text-anchor="middle">Change in F1 from G to M</text>
+    <text x="297.972886" y="290.000464" text-anchor="middle" font-size="9">Same 180 untouched confirmatory windows; no refit or post-hoc exclusions.</text>
+    <text x="297.972886" y="16.318125" text-anchor="middle" font-size="12">Frozen confirmation: fusion helps articulation, hurts stationary state</text>
+   </g>
+   <path d="M 71.264063 249.167565 L 71.264063 22.318125 M 524.681709 249.167565 L 524.681709 22.318125 M 71.264063 249.167565 L 524.681709 249.167565 M 71.264063 22.318125 L 524.681709 22.318125" fill="none" stroke="#000" stroke-width=".8"/>
+  </g>
+ </g>
+ <defs><clipPath id="plotclip"><rect x="71.264063" y="22.318125" width="453.417646" height="226.84944"/></clipPath></defs>
+</svg>

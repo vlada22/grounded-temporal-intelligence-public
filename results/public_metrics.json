@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "article": "04",
+  "source_commit": "018e4f6ad40a27aeaf08d13b721380042d6c5546",
+  "original_source_tg_diagnostic": {
+    "minimum_temporal_iou": 0.5,
+    "review_type": "frozen AI-assisted source review; not human validation",
+    "T": {"precision": 0.18, "recall": 0.4736842, "f1": 0.2608696},
+    "G": {"precision": 0.5357143, "recall": 0.7894737, "f1": 0.6382979}
+  },
+  "representation_level": {
+    "reviewed_windows": 205,
+    "proper_grouped_f1": {"G": 0.478, "X": 0.230, "M": 0.291},
+    "leaky_random_window_mean_f1": {"X": 0.962, "M": 0.962},
+    "note": "random-window values are a leakage diagnostic, not performance evidence"
+  },
+  "discovery": {
+    "reviewed_windows": 172,
+    "class_counts": {"stationary": 60, "translating": 60, "articulating": 52},
+    "wide_32d_macro_f1": {"G": 0.668, "X": 0.616, "M": 0.616},
+    "nested_compact_macro_f1": {"G": 0.668, "X": 0.621, "M": 0.876},
+    "nested_compact_balanced_accuracy": {"G": 0.694, "X": 0.609, "M": 0.872},
+    "selected_x3d_pca_components": 2,
+    "selection_note": "selected independently in all four outer folds using only outer-training videos; exploratory discovery result"
+  },
+  "confirmatory": {
+    "reviewed_windows": 180,
+    "macro_f1": {"G": 0.673, "X": 0.522, "M": 0.683},
+    "balanced_accuracy": {"G": 0.689, "X": 0.517, "M": 0.689},
+    "accuracy": {"G": 0.689, "X": 0.517, "M": 0.689},
+    "m_minus_g_macro_f1": 0.010,
+    "class_f1": {
+      "stationary": {"G": 0.653, "M": 0.451, "delta": -0.202},
+      "translating": {"G": 0.932, "M": 0.966, "delta": 0.033},
+      "articulating": {"G": 0.435, "M": 0.634, "delta": 0.199}
+    },
+    "error_exchange": {"g_errors_corrected_by_m": 41, "new_m_errors": 41},
+    "interpretation": "weak/mixed confirmation; class-specific complementarity plus a reliability/gating problem"
+  }
+}

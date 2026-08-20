@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Explore persistent entities, semantic 3D trajectories, and changing relationships through time." />
+    <title>Grounded Temporal Intelligence — Semantic Motion Explorer</title>
+    <link rel="stylesheet" href="./styles.css?v=20260818-reviewed" />
+  </head>
+  <body>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Grounded Temporal Intelligence home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>Grounded Temporal Intelligence</strong><small>Article 04 · Semantic Motion Explorer</small></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#explorer">Explorer</a>
+        <a href="#contract">Contract</a>
+        <a class="repo-link" href="https://github.com/vlada22/grounded-temporal-intelligence-public" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="eyebrow"><span></span> A scene is not frozen in time</p>
+        <h1>Follow the entity.<br /><em>Understand the change.</em></h1>
+        <p class="hero-copy">Scrub the reviewed 20-second source across propagated masks,
+          shot-local semantic geometry, deterministic model intervals, and a conservative
+          source reference.</p>
+        <div class="claim-row" aria-label="Research boundaries">
+          <span><b>3D CNN</b> learns in x,y,t</span>
+          <span><b>Geometry</b> reconstructs x,y,z</span>
+          <span><b>World state</b> persists through x,y,z,t</span>
+        </div>
+      </section>
+
+      <section id="explorer" class="explorer" aria-labelledby="explorer-title">
+        <div class="section-heading">
+          <div><p class="section-kicker">Synchronized world state</p><h2 id="explorer-title">One moment, three connected views</h2></div>
+          <p>Play the sequence or scrub directly. Select an entity to trace the same reviewed
+            identity through the video, geometry, events, and uncertainty.</p>
+        </div>
+
+        <aside id="fixture-notice" class="fixture-notice" role="status">
+          <span>Reviewed learned checkpoint</span>
+          <p>Real SAM 2 and VGGT outputs are shown. Geometry is relative and resets at every
+            edit. The source labels are a single AI-assisted review—not human or metric 3D truth.</p>
+        </aside>
+        <aside id="load-error" class="load-error" role="alert" hidden></aside>
+
+        <div id="summary-strip" class="summary-strip" aria-label="Reviewed artifact summary"></div>
+
+        <div class="transport">
+          <button id="play-button" class="play-button" type="button" aria-label="Play sequence"><span aria-hidden="true">▶</span></button>
+          <label for="time-slider">Sequence time</label>
+          <input id="time-slider" type="range" min="0" max="12" value="0" step="0.02" />
+          <output id="time-output" for="time-slider">00:00.00</output>
+        </div>
+
+        <div class="status-row">
+          <div><span id="shot-status" class="status-pill">shot-000</span><span id="frame-status">frame 000</span></div>
+          <label class="failure-toggle"><input id="failure-overlay" type="checkbox" /> Show rejected identity masks</label>
+        </div>
+
+        <div class="visual-grid">
+          <article class="view-card">
+            <div class="card-heading"><div><p class="section-kicker">Source observation</p><h3>Reviewed masks</h3></div><span>dense SAM 2 · 64×36 previews</span></div>
+            <div class="video-stage">
+              <video id="source-video" width="1280" height="720" muted playsinline preload="metadata" aria-label="Article 04 source video"></video>
+              <canvas id="mask-canvas" width="1280" height="720" aria-label="Reviewed mask overlay"></canvas>
+              <div id="video-empty-state" class="video-empty-state" hidden>Editorial transition excluded from analysis</div>
+            </div>
+          </article>
+          <article class="view-card">
+            <div class="card-heading"><div><p class="section-kicker">Geometric grounding</p><h3>Semantic local map</h3></div><span>shot-local · relative scale</span></div>
+            <canvas id="world-canvas" width="760" height="430" aria-label="Semantic 3D local map"></canvas>
+          </article>
+        </div>
+
+        <div class="analysis-grid">
+          <article class="timeline-card">
+            <div class="card-heading timeline-heading">
+              <div><p class="section-kicker">Temporal state</p><h3>Relations, events, uncertainty</h3></div>
+              <div id="timeline-mode" class="segmented-control" role="group" aria-label="Timeline source">
+                <button type="button" data-mode="model" aria-pressed="true">Model</button>
+                <button type="button" data-mode="reference" aria-pressed="false">Source review</button>
+              </div>
+            </div>
+            <p id="timeline-caption" class="timeline-caption"></p>
+            <div id="timeline" class="timeline"></div>
+          </article>
+          <aside class="inspector-card">
+            <p class="section-kicker">Selected entity</p>
+            <div id="entity-buttons" class="entity-buttons" role="group" aria-label="Tracked entities"></div>
+            <h3 id="entity-label">Person 1</h3>
+            <dl>
+              <div><dt>Track</dt><dd id="entity-track">person-01</dd></div>
+              <div><dt>Shot</dt><dd id="entity-shot">shot-000</dd></div>
+              <div><dt>Identity review</dt><dd id="identity-state">accepted</dd></div>
+              <div><dt>World position</dt><dd id="entity-position">relative</dd></div>
+              <div><dt>Point support</dt><dd id="point-support">available</dd></div>
+              <div><dt>Active state</dt><dd id="active-state">entered_region</dd></div>
+            </dl>
+            <button id="failure-jump" class="failure-jump" type="button">Inspect frame-132 identity switch</button>
+            <button id="provenance-toggle" class="provenance-toggle" type="button" aria-expanded="false">Artifact provenance <span aria-hidden="true">+</span></button>
+            <ol id="provenance-list" hidden></ol>
+          </aside>
+        </div>
+      </section>
+
+      <section id="contract" class="contract-section">
+        <div><p class="section-kicker">The semantic 4D contract</p><h2>Observe. Ground.<br />Persist. Measure.</h2><p>Each public claim remains connected to the source observation, coordinate frame, confidence, derivation, and model lineage.</p></div>
+        <div class="contract-flow" aria-label="Semantic 4D pipeline">
+          <article><span>01</span><b>Observe</b><p>Masks, semantics, camera views</p></article>
+          <article><span>02</span><b>Ground</b><p>Camera and entity geometry</p></article>
+          <article><span>03</span><b>Persist</b><p>Identity and relation intervals</p></article>
+          <article><span>04</span><b>Measure</b><p>Motion and observable events</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer><p>Grounded Temporal Intelligence · Article 04 research checkpoint</p><p>Static artifact explorer · No live model inference</p></footer>
+    <script type="module" src="./app.js?v=20260818-reviewed"></script>
+  </body>
+</html>
+
