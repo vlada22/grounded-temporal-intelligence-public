@@ -2,7 +2,7 @@
 
 ## When Local Motion Evidence Helps Camera-Aware Geometry — and When Fusion Fails
 
-*Article 04 publication candidate — reviewed learned-model outputs, grouped evaluation, controlled multi-video discovery, and an independently frozen confirmatory test. The results are a bounded research study, not a general benchmark claim.*
+*Article 04 — reviewed learned-model outputs, grouped evaluation, controlled multi-video discovery, and an independently frozen confirmatory test. The results form a bounded research study, not a general benchmark claim.*
 
 The most convincing fusion result in this experiment was also the one I eventually stopped trusting at face value.
 
@@ -12,19 +12,16 @@ That contraction became more informative than the original gain. The local video
 
 The original architectural question was simple: **can camera-aware 3D geometry and a 3D CNN become more useful together than either representation alone?** In the frozen test, fusion gained **+0.010 macro-F1** over geometry while accuracy and balanced accuracy were unchanged. The measured effect was positive, small and class-dependent.
 
-The scene below is the clearest visual summary. It starts from a real frame in the independent confirmatory set and connects persistent object support to two different forms of motion evidence: world-relative geometry from VGGT and local spatiotemporal structure from X3D-S.
+The scene below is the clearest visual summary. It starts from an actual frame in a synthetic confirmatory video and connects persistent object support to two different forms of motion evidence: world-relative geometry from VGGT and local spatiotemporal structure from X3D-S.
 
 ![CF02 actual scene and measured fusion cube](assets/figures/figure-cf-06-scene-fusion-cube.png)
 
-*Visual abstract — actual CF02 frame at source t = 4.0 s. SAM 2 provides the tracked object support for the stationary microwave, translating box and articulating cook. The cube contains all 45 reviewed windows from that scene: x is VGGT object displacement normalized by object extent; y/z are the two frozen X3D bottleneck components. Black rings mark windows where geometry alone was wrong and fusion corrected it. CF02 is an explanatory positive case, not the aggregate result.*
+*Visual abstract — actual frame at source t = 4.0 s from the synthetic CF02 video. SAM 2 provides the tracked object support for the stationary microwave, translating box and articulating cook. The cube contains all 45 reviewed windows from that scene: x is VGGT object displacement normalized by object extent; y/z are the two frozen X3D bottleneck components. Black rings mark windows where geometry alone was wrong and fusion corrected it. CF02 is an explanatory positive case, not the aggregate result.*
 
 ## Artifacts
 
-- [GitHub repository](https://github.com/vlada22/grounded-temporal-intelligence-public)
-- [Reviewed Semantic Motion Explorer](demo/README.md)
-- [Original representation-level fusion result](results/representation/README.md)
-- [Controlled multi-video discovery result](results/discovery/README.md)
-- [Independent frozen confirmatory result](results/confirmatory/README.md)
+- [Public GitHub repository](https://github.com/vlada22/grounded-temporal-intelligence-public)
+- [Live Semantic Motion Explorer](https://vlada22.github.io/grounded-temporal-intelligence-public/demo/)
 
 ## What I found
 
@@ -35,7 +32,7 @@ The experiments made the original fusion idea more specific — and less conveni
 3. **Adding a high-dimensional branch reduced held-out performance.** The dense 2048-D video representation initially made the classifier worse, even after the representation path itself was corrected.
 4. **Compression improved discovery-set transfer.** On a controlled four-video discovery benchmark, constraining the video branch to a tiny training-only subspace changed fusion from failed concatenation into the best held-out condition.
 5. **Independent confirmation shrank that gain dramatically.** With the bottleneck and classifier frozen before new videos were reviewed, M moved from 0.673 to 0.683 macro-F1 over G — technically positive, but nowhere near the discovery gain.
-6. **The useful complementarity is class-specific.** In the untouched confirmatory set, fusion improves articulation by about +0.199 F1 and translation by +0.033, while degrading stationary classification by about -0.202.
+6. **The useful complementarity was class-specific.** In the untouched confirmatory set, fusion improved articulation by about +0.199 F1 and translation by +0.033, while degrading stationary classification by about -0.202.
 7. **The residual evidence was not uniformly reliable.** It corrected some geometry errors while replacing an equal number of correct geometry decisions in the frozen confirmatory set.
 
 The result I would carry forward is therefore not simply “CNN + transformer works.” It is:
@@ -44,7 +41,7 @@ The result I would carry forward is therefore not simply “CNN + transformer wo
 
 ## The system I actually tested
 
-The representation has three learned components with deliberately different roles:
+The tested representation combined three learned components with deliberately different roles:
 
 **SAM 2 → persistent object support**  
 **VGGT → camera-aware 3D geometry**  
@@ -58,14 +55,14 @@ That distinction became important almost immediately.
 
 ## Finding 1 — camera-aware geometry outperformed screen-space motion in this source
 
-The original source contains camera motion, static objects, rigid translation, articulated motion, occlusion, hard cuts and a blended transition.
+The original synthetic source contains camera motion, static objects, rigid translation, articulated motion, occlusion, hard cuts and a blended transition.
 
 I first compared two temporal representations that could emit the same `moving` / `stationary` event vocabulary:
 
 - **T:** persistent identity plus screen-space motion;
 - **G:** persistent identity plus camera-compensated VGGT geometry.
 
-Against two frozen AI-assisted source reviews — used as provisional reference passes, not human validation — T reaches F1 0.261 and 0.254, while G reaches 0.638 and 0.653 at temporal IoU ≥ 0.5.
+Against two frozen AI-assisted source reviews — used as provisional reference passes, not human validation — T reached F1 0.261 and 0.254, while G reached 0.638 and 0.653 at temporal IoU ≥ 0.5.
 
 ![Strict common-vocabulary T/G event alignment](assets/figures/figure-01-ftg-strict-alignment.png)
 
@@ -75,7 +72,7 @@ This is not a general benchmark. Within this source and vocabulary, the camera-a
 
 The first supervised G/X/M experiment used dense object-centric windows from one synthetic sequence.
 
-After correcting the X3D path to use masked RGB and a 2048-dimensional pre-classifier representation, the result was still negative:
+After correcting the X3D path to use masked RGB and a 2048-dimensional pre-classifier representation, the held-out result remained negative:
 
 | condition | F1 | balanced accuracy |
 | --- | ---: | ---: |
@@ -83,13 +80,13 @@ After correcting the X3D path to use masked RGB and a 2048-dimensional pre-class
 | X — X3D | 0.230 | 0.543 |
 | M — G + X | 0.291 | 0.620 |
 
-That failure was useful. The 2048-D X3D representation carried far more than the downstream task needed: object appearance, local activity and scene-specific structure. Concatenating it with a small geometry vector gave the classifier many ways to fit the wrong invariances.
+That failure was useful. The 2048-D X3D representation carried far more than the downstream task required: object appearance, local activity and scene-specific structure. In this small dataset, concatenating that dense representation with a compact geometry vector was associated with poor held-out transfer.
 
 The most revealing diagnostic was deliberately invalid. When overlapping windows from the same tracks were randomly divided between train and test, X and M jumped to roughly 0.96 F1. Under grouped holdout, they collapsed.
 
 ![Split leakage diagnostic](assets/figures/figure-fusion-v2-leakage-diagnostic.png)
 
-That result changed the direction of the work. A superficial split could have “proved” exactly the claim I wanted. Grouped evaluation showed that the representation was recognizing highly similar objects and windows rather than learning a transferable motion rule.
+That result changed the direction of the work. A superficial split could have “proved” exactly the claim I wanted. The gap between random-window and grouped evaluation was consistent with fitting highly similar objects and overlapping windows rather than learning a transferable motion rule.
 
 So I stopped trying to rescue the single-sequence score and changed the experiment.
 
@@ -117,7 +114,7 @@ Then the dimensionality sensitivity analysis produced the strongest discovery fi
 
 ![Fusion bottleneck sensitivity](assets/figures/figure-mv-03-pca-bottleneck.png)
 
-With a very small X3D subspace, M improves sharply. As more X3D dimensions are admitted, fusion progressively collapses back toward the weaker X-only branch.
+With a very small X3D subspace, M improved sharply. As more X3D dimensions were admitted, fusion progressively collapsed back toward the weaker X-only branch.
 
 Because that pattern was discovered post-hoc, I did not simply report the best point. I repeated the selection inside a nested leave-one-video-out protocol. For every outer held-out video, the PCA width was chosen only from the three outer-training videos.
 
@@ -155,11 +152,11 @@ After the GPU run, all 469 manifest-tracked files matched their recorded byte si
 
 Then the frozen model was applied once.
 
-The discovery-to-confirmation comparison is the most important summary figure in the article:
+The discovery-to-confirmation comparison summarizes the main change in interpretation:
 
 ![Discovery versus frozen confirmation](assets/figures/figure-cf-04-discovery-vs-confirmatory.png)
 
-The discovery gain contracts from **G 0.668 → M 0.876** to **G 0.673 → M 0.683** on the untouched confirmatory set.
+The discovery gain contracted from **G 0.668 → M 0.876** to **G 0.673 → M 0.683** on the untouched confirmatory set.
 
 The full frozen result is:
 
@@ -169,9 +166,9 @@ The full frozen result is:
 | X — X3D bottleneck | 0.522 | 0.517 | 0.517 |
 | **M — compact fusion** | **0.683** | **0.689** | **0.689** |
 
-The preregistered primary criterion is technically met: M macro-F1 is higher than G macro-F1.
+The preregistered primary criterion was technically met: M macro-F1 was higher than G macro-F1.
 
-But the margin is only **+0.010**. Accuracy and balanced accuracy are unchanged. M corrects 41 G errors and introduces exactly 41 new errors. It beats G on macro-F1 in only one of the four confirmatory videos.
+But the margin was only **+0.010**. Accuracy and balanced accuracy were unchanged. M corrected 41 G errors and introduced exactly 41 new errors. It beat G on macro-F1 in only one of the four confirmatory videos.
 
 That is weak/mixed confirmation, not a replication of the discovery magnitude.
 
@@ -191,9 +188,9 @@ The direct change from G to M on the untouched confirmatory set is:
 
 This class-level result is the clearest evidence for complementarity in the frozen test.
 
-Geometry is already very strong at rigid translation because world-relative displacement is exactly what the representation preserves. It is much weaker at local articulation when the entity itself remains approximately fixed in space. That is where the short-term X3D representation adds information that a centroid trajectory cannot express.
+In this test, geometry was strong at rigid translation because world-relative displacement is exactly what the representation preserves. It was weaker at local articulation when the entity remained approximately fixed in space. In those cases, the short-term X3D representation added information that a centroid trajectory did not express.
 
-But the same branch also hurts stationary classification. On novel appearances, local visual dynamics can look action-like even when the geometry state is correctly stationary.
+But the same branch also hurt stationary classification. Those regressions are consistent with local visual dynamics appearing action-like to the classifier even when the geometry condition was correctly stationary.
 
 So the independent experiment does not say that X3D is generally better than geometry, or even that compact fusion is generally better than geometry. It says something narrower and more useful:
 
@@ -201,13 +198,13 @@ So the independent experiment does not say that X3D is generally better than geo
 
 ## Finding 6 — the measured tradeoff motivates conditional fusion
 
-The reverse-dolly kitchen scene, CF02, is the one untouched confirmatory case where the frozen fusion model clearly improves over geometry alone: macro-F1 rises from 0.633 to 0.933. That makes it a useful explanatory scene, provided it is not mistaken for aggregate evidence.
+The reverse-dolly kitchen scene, CF02, was the one untouched confirmatory case where the frozen fusion model clearly improved over geometry alone: macro-F1 rose from 0.633 to 0.933. That makes it a useful explanatory scene, provided it is not mistaken for aggregate evidence.
 
-The opening visual uses that scene deliberately. It connects an **actual frame from the uploaded MP4** to the measured representation used by the classifier. SAM 2 provides persistent support for the stationary microwave, translating box and articulating cook; the 3D cube places all 45 reviewed CF02 windows using one explicit VGGT geometry variable and the two frozen X3D bottleneck components. Black rings mark the 16 windows where G is wrong and M corrects it.
+The opening visual uses that scene deliberately. It connects an **actual frame from the synthetic source video** to the measured representation used by the classifier. SAM 2 provides persistent support for the stationary microwave, translating box and articulating cook; the 3D cube places all 45 reviewed CF02 windows using one explicit VGGT geometry variable and the two frozen X3D bottleneck components. Black rings mark the 16 windows where G was wrong and M corrected it.
 
-It is deliberately **not** a synthetic shared embedding. The x-axis remains an interpretable geometry quantity, while the other two axes are the frozen X3D PCA components selected from the discovery data. CF02 is a representative positive case; the discovery-vs-confirmation and class-delta plots remain the aggregate evidence.
+It is deliberately **not an invented shared embedding**. The x-axis remains an interpretable geometry quantity, while the other two axes are the frozen X3D PCA components selected from the discovery data. CF02 is a representative positive case; the discovery-vs-confirmation and class-delta plots remain the aggregate evidence.
 
-Returning to that opening visual after the confirmatory results makes the architectural implication easier to see. Rigid translation creates a strong geometry signal, while articulation can occupy a different region of the compact video subspace even when world-relative displacement stays small. The branches contribute different evidence, but the confirmatory tradeoff shows that the system still needs to decide when each branch deserves influence.
+Returning to that opening visual after the confirmatory results makes the architectural implication easier to see. In CF02, rigid translation created a strong geometry signal, while articulation occupied a different region of the compact video subspace even when world-relative displacement stayed small. The branches contributed different evidence, but the aggregate confirmatory tradeoff showed that this evidence was not uniformly reliable.
 
 The discovery model effectively uses:
 
@@ -235,9 +232,9 @@ Two early GPU bundles passed their manifest checks and were still scientifically
 
 The hashes proved that the returned bytes were intact. They did **not** prove that those bytes represented a valid experiment.
 
-That distinction matters in multimodel pipelines: reproducibility has at least two layers. You need byte-level provenance, but you also need semantic validity of the time intervals, identities, coordinate systems and support used to produce those bytes.
+That distinction matters in multimodel pipelines: reproducibility has at least two layers. A reproducible experiment needs byte-level provenance and semantic validity for the time intervals, identities, coordinate systems and support used to produce those bytes.
 
-### Cross-model disagreement became an observability signal
+### Cross-branch disagreement exposed hidden pipeline failures
 
 The missed dissolve did not first present itself as an editing problem. It appeared as a cross-model anomaly. VGGT showed a 0.2401 model-unit camera discontinuity and a 13.8° rotation between nearby retained frames. Around the same transition, SAM 2 masks developed gaps and X3D tubes crossed depicted views that should never have shared one temporal window.
 
@@ -260,21 +257,21 @@ Identity, edit boundaries, source hashes, support validity and review state are 
 
 ## What this experiment measured
 
-The strongest defensible claims are now:
+The strongest defensible measured conclusions are:
 
 1. camera-aware geometry materially improved motion interpretation over screen-space temporal motion on the original source;
 2. local video evidence was complementary for some classes and still hurt downstream generalization when fused uniformly;
-3. grouped evaluation is essential for dense temporal windows because random overlap can manufacture misleading scores;
+3. grouped evaluation avoided the misleading scores produced by random overlap among dense temporal windows;
 4. a compact bottleneck exposed a strong discovery-set fusion signal under nested held-out-video evaluation;
 5. the frozen independent set did **not** reproduce that gain at the same magnitude;
-6. the confirmatory signal is class-specific: articulation improves substantially, translation improves slightly, and stationary classification degrades;
+6. the confirmatory signal was class-specific: articulation improved substantially, translation improved slightly, and stationary classification degraded;
 7. artifact integrity alone is insufficient — temporal, identity and support semantics must also remain valid;
-8. cross-model disagreement can expose hidden pipeline failures that are not obvious inside any one branch;
+8. cross-branch disagreement exposed pipeline failures that were not obvious inside any one branch;
 9. the measured class tradeoff motivates testing **reliability-aware fusion** rather than simply adding capacity.
 
 What this does **not** establish is that a two-component PCA bottleneck is universally optimal, that M broadly outperforms G, or that these synthetic scenes constitute a general computer-vision benchmark.
 
-The value of the experiment is narrower: it measures how camera-aware geometry and local video evidence interact in this controlled setting, then follows that interaction far enough to expose both the benefit and the failure mode.
+The value of the experiment is narrower: it measured how camera-aware geometry and local video evidence interacted in this controlled setting, then followed that interaction far enough to expose both the benefit and the failure mode.
 
 ## Measured takeaway and next hypothesis
 
