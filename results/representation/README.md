@@ -22,7 +22,7 @@ A deliberately invalid random-window split places overlapping windows from the s
 
 The random-window score is **not** a performance result. It is retained to show how temporal overlap can manufacture an apparently successful fusion result.
 
-![Grouped evaluation versus leakage](../../assets/figures/figure-fusion-v2-leakage-diagnostic.svg)
+![Grouped evaluation versus leakage](../../assets/figures/figure-fusion-v2-leakage-diagnostic.png)
 
 ## Public boundary
 

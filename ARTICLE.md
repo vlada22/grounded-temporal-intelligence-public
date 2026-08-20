@@ -1,6 +1,6 @@
 # From Relationships to Motion
 
-## What X3D Adds to Camera-Aware Geometry — and Where Late Fusion Fails
+## When Local Motion Evidence Helps Camera-Aware Geometry — and When Fusion Fails
 
 *Article 04 publication candidate — reviewed learned-model outputs, grouped evaluation, controlled multi-video discovery, and an independently frozen confirmatory test. The results are a bounded research study, not a general benchmark claim.*
 
@@ -8,9 +8,9 @@ The most convincing fusion result in this experiment was also the one I eventual
 
 On four discovery videos, a compact X3D bottleneck improved held-out macro-F1 from **0.668 with geometry alone to 0.876 with fusion**. I then froze the representation, bottleneck and classifier and tested four untouched videos. The advantage contracted to **0.683 versus 0.673**.
 
-That contraction became more informative than the original gain. X3D was not adding generic “motion intelligence.” Its useful residual was much more specific: it improved **articulation** substantially, improved **translation** slightly, and actively damaged **stationary** decisions that geometry was already getting right.
+That contraction became more informative than the original gain. The local video branch was not adding generic “motion intelligence.” Its measured effect was class-specific: it improved **articulation** substantially, improved **translation** slightly, and damaged **stationary** decisions that geometry was already getting right.
 
-The original architectural question was simple: **can camera-aware 3D geometry and a 3D CNN become more useful together than either representation alone?** The answer turned out to be yes, but only conditionally. Complementary evidence is not automatically safe evidence.
+The original architectural question was simple: **can camera-aware 3D geometry and a 3D CNN become more useful together than either representation alone?** In the frozen test, fusion gained **+0.010 macro-F1** over geometry while accuracy and balanced accuracy were unchanged. The measured effect was positive, small and class-dependent.
 
 The scene below is the clearest visual summary. It starts from a real frame in the independent confirmatory set and connects persistent object support to two different forms of motion evidence: world-relative geometry from VGGT and local spatiotemporal structure from X3D-S.
 
@@ -30,17 +30,17 @@ The scene below is the clearest visual summary. It starts from a real frame in t
 
 The experiments made the original fusion idea more specific — and less convenient.
 
-1. **Geometry has to be made honest first.** On the original sequence, camera-aware VGGT geometry improves event alignment substantially over screen-space temporal motion.
-2. **A leaky split can manufacture the success story you want.** Randomly splitting overlapping windows pushed X3D/fusion to roughly 0.96 F1; grouped holdout collapsed that apparent gain.
-3. **More representation is not automatically better fusion.** A dense 2048-D X3D branch initially made the classifier worse, even after the representation path itself was corrected.
-4. **A compact bottleneck exposed a transferable X3D signal.** On a controlled four-video discovery benchmark, constraining X3D to a tiny training-only subspace changed M from failed concatenation into the best held-out model.
+1. **Camera compensation strengthened temporal interpretation in the original sequence.** The geometry condition aligned substantially better than screen-space motion with both frozen source reviews.
+2. **Overlapping-window splits overstated performance.** Randomly splitting similar windows pushed the video and fusion conditions to roughly 0.96 F1; grouped holdout collapsed that apparent gain.
+3. **Adding a high-dimensional branch reduced held-out performance.** The dense 2048-D video representation initially made the classifier worse, even after the representation path itself was corrected.
+4. **Compression improved discovery-set transfer.** On a controlled four-video discovery benchmark, constraining the video branch to a tiny training-only subspace changed fusion from failed concatenation into the best held-out condition.
 5. **Independent confirmation shrank that gain dramatically.** With the bottleneck and classifier frozen before new videos were reviewed, M moved from 0.673 to 0.683 macro-F1 over G — technically positive, but nowhere near the discovery gain.
 6. **The useful complementarity is class-specific.** In the untouched confirmatory set, fusion improves articulation by about +0.199 F1 and translation by +0.033, while degrading stationary classification by about -0.202.
-7. **The missing fusion layer is reliability.** X3D contains useful residual evidence, but it should not be allowed to override geometry uniformly.
+7. **The residual evidence was not uniformly reliable.** It corrected some geometry errors while replacing an equal number of correct geometry decisions in the frozen confirmatory set.
 
 The result I would carry forward is therefore not simply “CNN + transformer works.” It is:
 
-> **Complementary representations are not automatically compatible representations. A compact bottleneck can expose useful residual motion evidence, but the next fusion layer has to learn when that evidence is trustworthy.**
+> **Complementary representations were not automatically compatible in this study. Compression exposed useful residual motion evidence on the discovery set, but the frozen confirmatory gain was small and class-dependent.**
 
 ## The system I actually tested
 
@@ -56,7 +56,7 @@ The downstream task is not to merge those quantities into one fake latent coordi
 
 That distinction became important almost immediately.
 
-## Finding 1 — geometry should come before video fusion
+## Finding 1 — camera-aware geometry outperformed screen-space motion in this source
 
 The original source contains camera motion, static objects, rigid translation, articulated motion, occlusion, hard cuts and a blended transition.
 
@@ -67,13 +67,11 @@ I first compared two temporal representations that could emit the same `moving` 
 
 Against two frozen AI-assisted source reviews — used as provisional reference passes, not human validation — T reaches F1 0.261 and 0.254, while G reaches 0.638 and 0.653 at temporal IoU ≥ 0.5.
 
-![Strict common-vocabulary T/G event alignment](assets/figures/figure-01-ftg-strict-alignment.svg)
+![Strict common-vocabulary T/G event alignment](assets/figures/figure-01-ftg-strict-alignment.png)
 
-This is not a general benchmark, but it establishes an important boundary for the rest of the article: **local video dynamics should augment a camera-aware state, not be asked to rediscover camera geometry implicitly.**
+This is not a general benchmark. Within this source and vocabulary, the camera-aware state was the stronger measured baseline for testing whether local video evidence added anything.
 
-That is why G becomes the meaningful baseline for the fusion experiments.
-
-## Finding 2 — naive X3D fusion can make the system worse
+## Finding 2 — adding a high-dimensional motion branch reduced held-out performance
 
 The first supervised G/X/M experiment used dense object-centric windows from one synthetic sequence.
 
@@ -89,13 +87,13 @@ That failure was useful. The 2048-D X3D representation carried far more than the
 
 The most revealing diagnostic was deliberately invalid. When overlapping windows from the same tracks were randomly divided between train and test, X and M jumped to roughly 0.96 F1. Under grouped holdout, they collapsed.
 
-![Split leakage diagnostic](assets/figures/figure-fusion-v2-leakage-diagnostic.svg)
+![Split leakage diagnostic](assets/figures/figure-fusion-v2-leakage-diagnostic.png)
 
 That result changed the direction of the work. A superficial split could have “proved” exactly the claim I wanted. Grouped evaluation showed that the representation was recognizing highly similar objects and windows rather than learning a transferable motion rule.
 
 So I stopped trying to rescue the single-sequence score and changed the experiment.
 
-## Finding 3 — a compact bottleneck exposes useful complementarity
+## Finding 3 — a compact bottleneck improved the discovery result
 
 The next benchmark used four independent synthetic videos with different camera regimes and three motion states in every video:
 
@@ -117,7 +115,7 @@ More independent data alone did not solve the compatibility problem.
 
 Then the dimensionality sensitivity analysis produced the strongest discovery finding in the article:
 
-![Fusion bottleneck sensitivity](assets/figures/figure-mv-03-pca-bottleneck.svg)
+![Fusion bottleneck sensitivity](assets/figures/figure-mv-03-pca-bottleneck.png)
 
 With a very small X3D subspace, M improves sharply. As more X3D dimensions are admitted, fusion progressively collapses back toward the weaker X-only branch.
 
@@ -135,7 +133,7 @@ The resulting discovery performance was:
 
 M corrected 45 G errors while introducing 13 regressions. Articulation showed the strongest class-level gain.
 
-This was the first strong evidence that the branches were not merely different — they could become useful together when the X3D branch was constrained to a compact, transferable subspace.
+On this discovery benchmark, the branches became useful together only when the X3D representation was constrained to a compact training-only subspace.
 
 But it was still a discovery result. The two-dimensional bottleneck had been found after looking at this benchmark.
 
@@ -159,7 +157,7 @@ Then the frozen model was applied once.
 
 The discovery-to-confirmation comparison is the most important summary figure in the article:
 
-![Discovery versus frozen confirmation](assets/figures/figure-cf-04-discovery-vs-confirmatory.svg)
+![Discovery versus frozen confirmation](assets/figures/figure-cf-04-discovery-vs-confirmatory.png)
 
 The discovery gain contracts from **G 0.668 → M 0.876** to **G 0.673 → M 0.683** on the untouched confirmatory set.
 
@@ -179,19 +177,19 @@ That is weak/mixed confirmation, not a replication of the discovery magnitude.
 
 And that contraction is one of the most valuable findings in the work. Without the independent set, it would have been very easy to stop at 0.876 and overstate the architecture.
 
-## Finding 5 — the useful X3D signal is specifically articulation
+## Finding 5 — the confirmatory gain was concentrated in articulation
 
 The pooled metric hides the real behavior.
 
 The direct change from G to M on the untouched confirmatory set is:
 
-![Frozen confirmatory class delta](assets/figures/figure-cf-05-class-delta.svg)
+![Frozen confirmatory class delta](assets/figures/figure-cf-05-class-delta.png)
 
 - **stationary:** 0.653 → 0.451 F1, **-0.202**;
 - **translating:** 0.932 → 0.966 F1, **+0.033**;
 - **articulating:** 0.435 → 0.634 F1, **+0.199**.
 
-This is the finding that most directly supports the original CNN/transformer intuition.
+This class-level result is the clearest evidence for complementarity in the frozen test.
 
 Geometry is already very strong at rigid translation because world-relative displacement is exactly what the representation preserves. It is much weaker at local articulation when the entity itself remains approximately fixed in space. That is where the short-term X3D representation adds information that a centroid trajectory cannot express.
 
@@ -199,9 +197,9 @@ But the same branch also hurts stationary classification. On novel appearances, 
 
 So the independent experiment does not say that X3D is generally better than geometry, or even that compact fusion is generally better than geometry. It says something narrower and more useful:
 
-> **X3D contributes residual information for local articulation, but the current fusion layer lacks a reliable way to decide when that residual should be trusted.**
+> **In the frozen test, local video evidence improved articulation but displaced correct stationary decisions; the pooled macro-F1 gain over geometry was +0.010.**
 
-## Finding 6 — the next fusion layer should be a gate, not a larger vector
+## Finding 6 — the measured tradeoff motivates conditional fusion
 
 The reverse-dolly kitchen scene, CF02, is the one untouched confirmatory case where the frozen fusion model clearly improves over geometry alone: macro-F1 rises from 0.633 to 0.933. That makes it a useful explanatory scene, provided it is not mistaken for aggregate evidence.
 
@@ -217,7 +215,7 @@ The discovery model effectively uses:
 
 where `B(X)` is the compact X3D bottleneck.
 
-The next model I would test is closer to:
+The next hypothesis I would test is a conditional residual model:
 
 **M = G + α(G, B(X), U) · R(B(X))**
 
@@ -225,7 +223,7 @@ where `α` is a learned reliability gate, `R` is the video residual, and `U` can
 
 That changes the question from “how many X3D features should I concatenate?” to “when should local video evidence be allowed to alter a geometry decision?”
 
-The confirmatory class tradeoff suggests that this is the right next problem.
+The confirmatory class tradeoff motivates this next experiment; it does not establish that gating will solve the problem.
 
 ## The failures were part of the result
 
@@ -245,7 +243,7 @@ The missed dissolve did not first present itself as an editing problem. It appea
 
 Those failures looked unrelated until they were traced back to the same transition.
 
-That suggests a useful systems principle: **when several perception branches are supposed to describe the same world state, disagreement between them can be used as an observability signal for the pipeline itself.** A geometry discontinuity can trigger identity review; identity instability can invalidate temporal tubes; temporal inconsistency can force a shot reset.
+In these failed runs, disagreement between branches exposed pipeline errors that were not obvious inside any one branch. That measured behavior motivates a broader observability hypothesis: geometry discontinuity, identity instability and temporal inconsistency may be useful triggers for cross-branch review.
 
 Several other failures reinforced the same boundary:
 
@@ -260,36 +258,36 @@ The common lesson is that **fusion does not repair invalid semantics. It propaga
 
 Identity, edit boundaries, source hashes, support validity and review state are therefore part of the representation contract, not administrative metadata.
 
-## What this experiment establishes
+## What this experiment measured
 
 The strongest defensible claims are now:
 
-1. camera-aware geometry materially improves motion interpretation over screen-space temporal motion on the original source;
-2. the pretrained X3D representation contains useful complementary information and can still hurt downstream generalization when fused naively;
+1. camera-aware geometry materially improved motion interpretation over screen-space temporal motion on the original source;
+2. local video evidence was complementary for some classes and still hurt downstream generalization when fused uniformly;
 3. grouped evaluation is essential for dense temporal windows because random overlap can manufacture misleading scores;
-4. a compact X3D bottleneck exposed a strong discovery-set fusion signal under nested held-out-video evaluation;
+4. a compact bottleneck exposed a strong discovery-set fusion signal under nested held-out-video evaluation;
 5. the frozen independent set did **not** reproduce that gain at the same magnitude;
 6. the confirmatory signal is class-specific: articulation improves substantially, translation improves slightly, and stationary classification degrades;
 7. artifact integrity alone is insufficient — temporal, identity and support semantics must also remain valid;
 8. cross-model disagreement can expose hidden pipeline failures that are not obvious inside any one branch;
-9. the next architectural problem is therefore **reliability-aware fusion**, not simply more capacity.
+9. the measured class tradeoff motivates testing **reliability-aware fusion** rather than simply adding capacity.
 
 What this does **not** establish is that a two-component PCA bottleneck is universally optimal, that M broadly outperforms G, or that these synthetic scenes constitute a general computer-vision benchmark.
 
-The value of the experiment is narrower: it identifies a concrete interaction between camera-aware geometry and one pretrained 3D-CNN representation, then follows that interaction far enough to expose both the benefit and the failure mode.
+The value of the experiment is narrower: it measures how camera-aware geometry and local video evidence interact in this controlled setting, then follows that interaction far enough to expose both the benefit and the failure mode.
 
-## The architectural takeaway
+## Measured takeaway and next hypothesis
 
 Article 4 began with the idea of combining the global spatial reasoning of a vision transformer with the local temporal reasoning of a 3D CNN.
 
 The final result is more useful than a simple win/loss comparison.
 
-**VGGT is strongest at the stable world-relative state. X3D contributes residual information about local articulation. The bottleneck makes that information easier to transfer. The confirmatory experiment shows that the remaining challenge is deciding when to trust it.**
+**In this experiment, geometry provided the stronger stable state baseline. Compressed local video evidence improved articulation, but its pooled confirmatory gain was small because stationary decisions degraded.**
 
 I would therefore preserve geometry as the state prior and let specialized temporal evidence modify that state only conditionally:
 
 **M = G + α(G, B(X), U) · R(B(X))**
 
-The important part is no longer the size of `B(X)`. It is the reliability term `α`: a mechanism that can suppress an action-like X3D residual when geometry is confidently stationary, while admitting it when local articulation is exactly what geometry cannot represent.
+In that proposed model, the key term would be `α`: a reliability mechanism intended to suppress an action-like X3D residual when geometry is confidently stationary, while admitting it when local articulation is exactly what geometry cannot represent.
 
-That is the architectural finding I would take forward from this experiment: **not a larger shared feature vector, but explicit state plus gated residual evidence.**
+The measured finding is the class-dependent tradeoff. **Explicit state plus gated residual evidence** is the next architectural hypothesis, not an established result.

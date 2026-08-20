@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-SOURCE_COMMIT = "018e4f6ad40a27aeaf08d13b721380042d6c5546"
+SOURCE_COMMIT = "f0be2850ea0ef57e5630eced915908e0ab29594b"
 VIDEO_SHA256 = "895055643b5797b139ab05baecd7f265fc698bdc11bc9cce690b760c1cee174a"
 PRIVATE_URL = "https://github.com/vlada22/grounded-temporal-intelligence"
 PUBLIC_URL = "https://github.com/vlada22/grounded-temporal-intelligence-public"
@@ -20,11 +20,11 @@ ARTICLE_REPLACEMENTS = {
     "../../artifacts/article-04-fusion-representation-v2/README.md": "results/representation/README.md",
     "../../artifacts/article-04-multivideo-fusion-v1/README.md": "results/discovery/README.md",
     "../../artifacts/article-04-confirmatory-result-v1/README.md": "results/confirmatory/README.md",
-    "../../artifacts/article-04-publication-v1/figure-01-ftg-strict-alignment.svg": "assets/figures/figure-01-ftg-strict-alignment.svg",
-    "../../artifacts/article-04-fusion-representation-v2/figure-fusion-v2-leakage-diagnostic.svg": "assets/figures/figure-fusion-v2-leakage-diagnostic.svg",
-    "../../artifacts/article-04-multivideo-fusion-v1/figure-mv-03-pca-bottleneck.svg": "assets/figures/figure-mv-03-pca-bottleneck.svg",
-    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-04-discovery-vs-confirmatory.svg": "assets/figures/figure-cf-04-discovery-vs-confirmatory.svg",
-    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-05-class-delta.svg": "assets/figures/figure-cf-05-class-delta.svg",
+    "../../artifacts/article-04-publication-v1/figure-01-ftg-strict-alignment.png": "assets/figures/figure-01-ftg-strict-alignment.png",
+    "../../artifacts/article-04-fusion-representation-v2/figure-fusion-v2-leakage-diagnostic.png": "assets/figures/figure-fusion-v2-leakage-diagnostic.png",
+    "../../artifacts/article-04-multivideo-fusion-v1/figure-mv-03-pca-bottleneck.png": "assets/figures/figure-mv-03-pca-bottleneck.png",
+    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-04-discovery-vs-confirmatory.png": "assets/figures/figure-cf-04-discovery-vs-confirmatory.png",
+    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-05-class-delta.png": "assets/figures/figure-cf-05-class-delta.png",
 }
 
 REQUIRED = [
@@ -34,11 +34,11 @@ REQUIRED = [
     "THIRD_PARTY.md",
     "index.html",
     "assets/article-04-source.mov",
-    "assets/figures/figure-01-ftg-strict-alignment.svg",
-    "assets/figures/figure-fusion-v2-leakage-diagnostic.svg",
-    "assets/figures/figure-mv-03-pca-bottleneck.svg",
-    "assets/figures/figure-cf-04-discovery-vs-confirmatory.svg",
-    "assets/figures/figure-cf-05-class-delta.svg",
+    "assets/figures/figure-01-ftg-strict-alignment.png",
+    "assets/figures/figure-fusion-v2-leakage-diagnostic.png",
+    "assets/figures/figure-mv-03-pca-bottleneck.png",
+    "assets/figures/figure-cf-04-discovery-vs-confirmatory.png",
+    "assets/figures/figure-cf-05-class-delta.png",
     "assets/figures/figure-cf-06-scene-fusion-cube.png",
     "demo/index.html",
     "demo/app.js",
@@ -109,6 +109,8 @@ def main() -> int:
             failures.append(f"feature/model payload must not be public: {relative}")
         if path.is_file() and path.suffix.lower() == ".zip":
             failures.append(f"GPU/research ZIP must not be public: {relative}")
+        if path.is_file() and path.suffix.lower() == ".svg":
+            failures.append(f"SVG publication asset must be converted to PNG: {relative}")
 
     article = (root / "ARTICLE.md").read_text(encoding="utf-8")
     if f"]({PRIVATE_URL})" in article:

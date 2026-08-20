@@ -12,12 +12,42 @@ import argparse
 import subprocess
 from pathlib import Path
 
-SOURCE_COMMIT = "018e4f6ad40a27aeaf08d13b721380042d6c5546"
+SOURCE_COMMIT = "f0be2850ea0ef57e5630eced915908e0ab29594b"
 PRIVATE_REPO_URL = "https://github.com/vlada22/grounded-temporal-intelligence"
 PUBLIC_REPO_URL = "https://github.com/vlada22/grounded-temporal-intelligence-public"
+ARTICLE_SOURCE = "docs/article-04/article.md"
+
+ARTICLE_REPLACEMENTS = {
+    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-06-scene-fusion-cube.png": "assets/figures/figure-cf-06-scene-fusion-cube.png",
+    PRIVATE_REPO_URL: PUBLIC_REPO_URL,
+    "../../demo/README.md": "demo/README.md",
+    "../../artifacts/article-04-fusion-representation-v2/README.md": "results/representation/README.md",
+    "../../artifacts/article-04-multivideo-fusion-v1/README.md": "results/discovery/README.md",
+    "../../artifacts/article-04-confirmatory-result-v1/README.md": "results/confirmatory/README.md",
+    "../../artifacts/article-04-publication-v1/figure-01-ftg-strict-alignment.png": "assets/figures/figure-01-ftg-strict-alignment.png",
+    "../../artifacts/article-04-fusion-representation-v2/figure-fusion-v2-leakage-diagnostic.png": "assets/figures/figure-fusion-v2-leakage-diagnostic.png",
+    "../../artifacts/article-04-multivideo-fusion-v1/figure-mv-03-pca-bottleneck.png": "assets/figures/figure-mv-03-pca-bottleneck.png",
+    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-04-discovery-vs-confirmatory.png": "assets/figures/figure-cf-04-discovery-vs-confirmatory.png",
+    "../../artifacts/article-04-confirmatory-result-v1/figure-cf-05-class-delta.png": "assets/figures/figure-cf-05-class-delta.png",
+}
 
 DIRECT_FILES = {
     "assets/article-04-source.mov": "assets/article-04-source.mov",
+    "artifacts/article-04-publication-v1/figure-01-ftg-strict-alignment.png": (
+        "assets/figures/figure-01-ftg-strict-alignment.png"
+    ),
+    "artifacts/article-04-fusion-representation-v2/figure-fusion-v2-leakage-diagnostic.png": (
+        "assets/figures/figure-fusion-v2-leakage-diagnostic.png"
+    ),
+    "artifacts/article-04-multivideo-fusion-v1/figure-mv-03-pca-bottleneck.png": (
+        "assets/figures/figure-mv-03-pca-bottleneck.png"
+    ),
+    "artifacts/article-04-confirmatory-result-v1/figure-cf-04-discovery-vs-confirmatory.png": (
+        "assets/figures/figure-cf-04-discovery-vs-confirmatory.png"
+    ),
+    "artifacts/article-04-confirmatory-result-v1/figure-cf-05-class-delta.png": (
+        "assets/figures/figure-cf-05-class-delta.png"
+    ),
     "artifacts/article-04-confirmatory-result-v1/figure-cf-06-scene-fusion-cube.png": (
         "assets/figures/figure-cf-06-scene-fusion-cube.png"
     ),
@@ -79,6 +109,15 @@ def patch_public_links(path: Path) -> None:
         path.write_text(updated, encoding="utf-8")
 
 
+def import_article(repo: Path, public_root: Path) -> None:
+    write_from_git(repo, public_root, ARTICLE_SOURCE, "ARTICLE.md")
+    article_path = public_root / "ARTICLE.md"
+    text = article_path.read_text(encoding="utf-8")
+    for old, new in ARTICLE_REPLACEMENTS.items():
+        text = text.replace(old, new)
+    article_path.write_text(text, encoding="utf-8")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--private-repo", type=Path, required=True)
@@ -100,6 +139,8 @@ def main() -> None:
     )
     if probe.returncode != 0:
         raise SystemExit(f"private checkout does not contain source commit {SOURCE_COMMIT}")
+
+    import_article(private_repo, public_root)
 
     for source, destination in DIRECT_FILES.items():
         write_from_git(private_repo, public_root, source, destination)

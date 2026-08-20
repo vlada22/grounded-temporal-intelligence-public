@@ -26,7 +26,7 @@ Under that exploratory nested protocol:
 
 M corrects 45 G errors while introducing 13 regressions. Because the bottleneck width was discovered on this benchmark, this is a discovery result rather than independent confirmation.
 
-![Bottleneck sensitivity](../../assets/figures/figure-mv-03-pca-bottleneck.svg)
+![Bottleneck sensitivity](../../assets/figures/figure-mv-03-pca-bottleneck.png)
 
 ## Public boundary
 

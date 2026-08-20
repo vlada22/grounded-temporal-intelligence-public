@@ -2,12 +2,12 @@
 
 Public, publication-focused distillation of Article 4 in the Grounded Visual Intelligence series.
 
-> What does an object-centric X3D-S representation add to camera-aware VGGT geometry, and where does late fusion fail?
+> When does local motion evidence improve a camera-aware geometric state, and when does fusion make that state estimate worse?
 
 - [Read **From Relationships to Motion**](ARTICLE.md)
 - [Open the **Semantic Motion Explorer**](demo/)
 
-The central result is deliberately narrower than “CNN + transformer works.” A compact X3D bottleneck produced a strong held-out discovery gain, but that gain contracted sharply on a frozen independent confirmatory set. The residual benefit was class-specific: articulation improved substantially, translation slightly, while stationary classification degraded.
+The central measured result is deliberately narrower than a general fusion claim. Compression produced a strong held-out discovery gain, but that gain contracted sharply on a frozen independent confirmatory set. The residual benefit was class-specific: articulation improved substantially, translation slightly, while stationary classification degraded.
 
 ## Headline result
 
@@ -23,7 +23,7 @@ On the confirmatory set, M and G have identical accuracy and balanced accuracy. 
 - translating F1: `0.932 -> 0.966` (`+0.033`)
 - articulating F1: `0.435 -> 0.634` (`+0.199`)
 
-The architectural implication is **reliability-aware residual fusion**: preserve geometry as the stable state prior and admit local video evidence conditionally.
+The measured finding is a small, class-dependent confirmatory gain. **Reliability-aware residual fusion** is the next hypothesis to test, not an established result.
 
 ## Public boundary
 
@@ -74,7 +74,7 @@ Then open `http://localhost:8000/demo/`.
 
 - The original-source T/G diagnostic uses two frozen AI-assisted source reviews, not independent human validation.
 - Random overlapping-window splits are shown only as a leakage diagnostic and are not performance evidence.
-- The two-component X3D bottleneck is an Article 04 discovery result, not a universal optimum.
+- The two-component bottleneck is an Article 04 discovery result, not a universal optimum.
 - The frozen confirmatory result is weak/mixed confirmation, not evidence that compact fusion broadly outperforms geometry.
 - The controlled synthetic discovery and confirmatory scenes are bounded experiments, not a general computer-vision benchmark.
 - Artifact hash integrity does not by itself establish semantic experiment validity.

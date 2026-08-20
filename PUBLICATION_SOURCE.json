@@ -3,7 +3,7 @@
   "article": "04",
   "series": "Grounded Visual Intelligence",
   "private_source_repository": "vlada22/grounded-temporal-intelligence",
-  "private_source_commit": "018e4f6ad40a27aeaf08d13b721380042d6c5546",
+  "private_source_commit": "f0be2850ea0ef57e5630eced915908e0ab29594b",
   "private_source_article": "docs/article-04/article.md",
   "distillation_date": "2026-08-21",
   "public_repository": "vlada22/grounded-temporal-intelligence-public",
@@ -13,7 +13,7 @@
     "included": [
       "canonical publication text with public-repository link/path adaptation only",
       "aggregate reviewed and frozen result summaries",
-      "publication figures used by the article",
+      "high-resolution PNG publication figures used by the article",
       "publication-permitted synthetic Gemini-generated video/image media",
       "static reviewed explorer bundle",
       "model identifiers and upstream license references",
