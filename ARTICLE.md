@@ -16,7 +16,7 @@ The scene below is the clearest visual summary. It starts from an actual frame i
 
 ![CF02 actual scene and measured fusion cube](assets/figures/figure-cf-06-scene-fusion-cube.png)
 
-*Figure 1: Where geometry and local video evidence become complementary. Left: an actual frame at source t = 4.0 s from the synthetic CF02 video, with SAM 2 support for the stationary microwave, translating box and articulating cook. Right: all 45 reviewed windows from that scene, plotted by VGGT displacement normalized by object extent and the two frozen X3D bottleneck components. Black rings mark windows where geometry alone was wrong and fusion corrected it. CF02 is an explanatory positive case, not the aggregate result.*
+*Figure 1: CF02 links SAM 2 object support with VGGT displacement and the frozen X3D bottleneck; black rings mark geometry errors corrected by fusion.*
 
 ## Artifacts
 
@@ -66,7 +66,7 @@ Against two frozen AI-assisted source reviews — used as provisional reference 
 
 ![Strict common-vocabulary T/G event alignment](assets/figures/figure-01-ftg-strict-alignment.png)
 
-*Figure 2: Camera-aware geometry produced the stronger event alignment on the original sequence. Using the same moving/stationary vocabulary and temporal IoU threshold, G reached F1 0.638 versus 0.261 for T. These values are diagnostic measurements against frozen AI-assisted source reviews, not an independent human benchmark.*
+*Figure 2: On the original sequence, camera-aware geometry aligned better with the reviewed event vocabulary than screen-space motion.*
 
 This is not a general benchmark. Within this source and vocabulary, the camera-aware state was the stronger measured baseline for testing whether local video evidence added anything.
 
@@ -86,7 +86,7 @@ The most revealing diagnostic was deliberately invalid. When overlapping windows
 
 ![Split leakage diagnostic](assets/figures/figure-fusion-v2-leakage-diagnostic.png)
 
-*Figure 3: Overlapping-window splits created a misleading performance gain. X and M both reached about 0.962 F1 under the random-window diagnostic, but fell to 0.230 and 0.291 under leave-one-shot-out evaluation. The gap shows why the grouped result, not the random split, is the relevant transfer test.*
+*Figure 3: Random window splitting inflated X and M to about 0.96 F1; grouped shot holdout exposed the generalization gap.*
 
 That result changed the direction of the work. A superficial split could have “proved” exactly the claim I wanted. The gap between random-window and grouped evaluation was consistent with fitting highly similar objects and overlapping windows rather than learning a transferable motion rule.
 
@@ -114,7 +114,7 @@ Then the dimensionality sensitivity analysis produced the strongest discovery fi
 
 ![Fusion bottleneck sensitivity](assets/figures/figure-mv-03-pca-bottleneck.png)
 
-*Figure 4: Fusion performance depended on a compact video bottleneck in the discovery set. M peaked at two X3D PCA components and declined as more dimensions were admitted, eventually converging toward the weaker X-only result. Because this sensitivity was found post-hoc, the component count was subsequently selected inside nested held-out-video evaluation.*
+*Figure 4: Discovery-set fusion peaked with two X3D PCA components and weakened as the bottleneck widened.*
 
 With a very small X3D subspace, M improved sharply. As more X3D dimensions were admitted, fusion progressively collapsed back toward the weaker X-only branch.
 
@@ -156,7 +156,7 @@ The discovery-to-confirmation comparison summarizes the main change in interpret
 
 ![Discovery versus frozen confirmation](assets/figures/figure-cf-04-discovery-vs-confirmatory.png)
 
-*Figure 5: The discovery advantage contracted under frozen confirmation. Compact fusion improved macro-F1 from 0.668 to 0.876 in nested discovery evaluation, but only from 0.673 to 0.683 on four untouched confirmatory videos. The later result supports a small measured gain, not replication of the discovery magnitude.*
+*Figure 5: Fusion’s macro-F1 gain shrank from +0.208 in discovery to +0.010 under frozen confirmation.*
 
 The discovery gain contracted from **G 0.668 → M 0.876** to **G 0.673 → M 0.683** on the untouched confirmatory set.
 
@@ -182,7 +182,7 @@ The direct change from G to M on the untouched confirmatory set is:
 
 ![Frozen confirmatory class delta](assets/figures/figure-cf-05-class-delta.png)
 
-*Figure 6: The frozen fusion effect was class-dependent. Relative to geometry, fusion raised articulation F1 by 0.199 and translation F1 by 0.033, while reducing stationary F1 by 0.202 across the same 180 untouched confirmatory windows. The opposing changes explain why the pooled macro-F1 gain remained small.*
+*Figure 6: Frozen fusion improved articulation and translation but degraded stationary classification.*
 
 - **stationary:** 0.653 → 0.451 F1, **-0.202**;
 - **translating:** 0.932 → 0.966 F1, **+0.033**;
